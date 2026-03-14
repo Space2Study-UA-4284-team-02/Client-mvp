@@ -41,7 +41,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT }}
             -Dsonar.organization=${{ secrets.SONAR_ORG }}
             -Dsonar.sources=src
