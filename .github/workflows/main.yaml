@@ -43,9 +43,6 @@ jobs:
           args: >
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT }}
             -Dsonar.organization=${{ secrets.SONAR_ORG }}
-            -Dsonar.sources=src
-            -Dsonar.tests=src/tests
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             
   # Test_Docker:
   #   runs-on: ubuntu-latest
