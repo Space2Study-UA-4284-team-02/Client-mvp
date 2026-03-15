@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 18
 
-      - name : Npm Install
+      - name: Npm Install
         run: npm install
         
       - name : Lint
@@ -32,7 +32,7 @@ jobs:
         
       - name : Check Path
         run: ls -la && pwd && ls -la /
-      
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@9598b8a83feef37de07f549027fab50ecffe6a6e
         if: success() || failure()
