@@ -17,10 +17,6 @@ vi.mock('~/redux/reducer', () => ({
   markFirstLoginComplete: () => markFirstLoginCompleteMock()
 }))
 
-vi.mock('~/context/step-context', () => ({
-  StepProvider: ({ children }) => <>{children}</>
-}))
-
 vi.mock('~/constants', () => ({
   student: 'student'
 }))
@@ -29,6 +25,20 @@ vi.mock('~/components/user-steps-wrapper/constants', () => ({
   tutorStepLabels: ['General Info', 'Subjects', 'Languages', 'Add Photo'],
   initialValues: {}
 }))
+
+vi.mock('~/context/step-context', async () => {
+  const PropTypesModule = await import('prop-types')
+
+  const StepProvider = ({ children }) => <>{children}</>
+
+  StepProvider.propTypes = {
+    children: PropTypesModule.default.node.isRequired
+  }
+
+  return {
+    StepProvider
+  }
+})
 
 vi.mock(
   '~/containers/tutor-home-page/general-info-step/GeneralInfoStep',
@@ -86,7 +96,7 @@ vi.mock(
           />
 
           {error ? <div>{error}</div> : null}
-          {preview ? <img alt='Uploaded photo preview' src={preview} /> : null}
+          {preview ? <img alt='Uploaded preview' src={preview} /> : null}
         </div>
       )
     }
@@ -99,6 +109,7 @@ vi.mock(
 
 vi.mock('~/components/step-wrapper/StepWrapper', async () => {
   const React = await import('react')
+  const PropTypesModule = await import('prop-types')
 
   const MockStepWrapper = ({ steps, children }) => {
     const [activeStep, setActiveStep] = React.useState(0)
@@ -122,6 +133,12 @@ vi.mock('~/components/step-wrapper/StepWrapper', async () => {
         <div data-testid='active-step-content'>{children[activeStep]}</div>
       </div>
     )
+  }
+
+  MockStepWrapper.propTypes = {
+    steps: PropTypesModule.default.arrayOf(PropTypesModule.default.string)
+      .isRequired,
+    children: PropTypesModule.default.node.isRequired
   }
 
   return {
@@ -183,9 +200,7 @@ describe('UserStepsWrapper', () => {
     await user.upload(input, bigFile)
 
     expect(screen.getByText('Photo render error')).toBeInTheDocument()
-    expect(
-      screen.queryByAltText('Uploaded photo preview')
-    ).not.toBeInTheDocument()
+    expect(screen.queryByAltText('Uploaded preview')).not.toBeInTheDocument()
   })
 
   it('should resize and show photo after adding photo', async () => {
@@ -207,7 +222,7 @@ describe('UserStepsWrapper', () => {
     await user.upload(input, validFile)
 
     expect(screen.queryByText('Photo render error')).not.toBeInTheDocument()
-    expect(screen.getByAltText('Uploaded photo preview')).toBeInTheDocument()
+    expect(screen.getByAltText('Uploaded preview')).toBeInTheDocument()
     expect(URL.createObjectURL).toHaveBeenCalledWith(validFile)
   })
 })
