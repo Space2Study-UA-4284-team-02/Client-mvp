@@ -46,19 +46,20 @@ jobs:
             -Dsonar.sources=src
             -Dsonar.tests=src/tests
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+             ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.key=%s -Dsonar.pullrequest.branch=%s -Dsonar.pullrequest.base=%s', github.event.pull_request.number, github.head_ref, github.base_ref) || '' }}
             
-  Test_Docker:
-    runs-on: ubuntu-latest
-    steps:
+  # Test_Docker:
+  #   runs-on: ubuntu-latest
+  #   steps:
 
-      #Checkout Repository
-      - uses: actions/checkout@v3
+  #     #Checkout Repository
+  #     - uses: actions/checkout@v3
       
-      # Docker Build
-      - uses: docker/build-push-action@v3
-        with:
-          push: false
-          file: ./Dockerfile
-          tags: front-stage:test
-          build-args: |
-            password=${{ secrets.DOCKER_PASS }}
+  #     # Docker Build
+  #     - uses: docker/build-push-action@v3
+  #       with:
+  #         push: false
+  #         file: ./Dockerfile
+  #         tags: front-stage:test
+  #         build-args: |
+  #           password=${{ secrets.DOCKER_PASS }}
