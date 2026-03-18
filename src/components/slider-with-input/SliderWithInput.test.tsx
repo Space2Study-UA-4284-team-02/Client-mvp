@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom/vitest'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -16,24 +15,7 @@ vi.mock('~/utils/range-filter', async () => {
 
   return {
     ...actual,
-    createMarks: vi.fn(() => []),
-    checkNumberIsInRange: vi.fn(
-      ({
-        inputValue,
-        min,
-        max
-      }: {
-        inputValue: number | null
-        min: number
-        max: number
-      }) => {
-        if (inputValue === null || Number.isNaN(inputValue)) return min
-        if (inputValue < min) return min
-        if (inputValue > max) return max
-
-        return inputValue
-      }
-    )
+    createMarks: vi.fn(() => [])
   }
 })
 
@@ -54,7 +36,7 @@ vi.mock('@mui/material/Slider', () => ({
       max={max}
       min={min}
       onChange={(event) =>
-        onChange(event as unknown as Event, Number(event.target.value))
+        onChange(event as unknown as Event, Number(event.currentTarget.value))
       }
       type='range'
       value={value}
@@ -62,8 +44,22 @@ vi.mock('@mui/material/Slider', () => ({
   )
 }))
 
+type SliderWithInputProps = {
+  defaultValue: number
+  title: string
+  min: number
+  max: number
+  onChange: (value: number) => void
+}
+
+type RenderComponentResult = {
+  onChange: ReturnType<typeof vi.fn>
+  slider: HTMLInputElement
+  input: HTMLInputElement
+}
+
 describe('SliderWithInput', () => {
-  const defaultProps = {
+  const defaultProps: SliderWithInputProps = {
     defaultValue: 100,
     title: 'Price',
     min: 50,
@@ -71,7 +67,9 @@ describe('SliderWithInput', () => {
     onChange: vi.fn()
   }
 
-  const renderComponent = (props = {}) => {
+  const renderComponent = (
+    props: Partial<SliderWithInputProps> = {}
+  ): RenderComponentResult => {
     const onChange = vi.fn()
 
     render(<SliderWithInput {...defaultProps} {...props} onChange={onChange} />)
@@ -87,16 +85,16 @@ describe('SliderWithInput', () => {
     vi.clearAllMocks()
   })
 
-  it('should renders correctly', () => {
+  it('should render correctly', () => {
     const { slider, input } = renderComponent()
 
-    expect(screen.getByText('Price')).toBeInTheDocument()
-    expect(slider).toBeInTheDocument()
-    expect(input).toBeInTheDocument()
-    expect(input).toHaveDisplayValue('100')
+    expect(screen.getByText('Price')).toBeTruthy()
+    expect(slider).toBeTruthy()
+    expect(input).toBeTruthy()
+    expect(input.value).toBe('100')
   })
 
-  it('should call onChange when slider is moved', () => {
+  it('should call onChange when slider value changes', () => {
     const { slider, onChange } = renderComponent()
 
     fireEvent.change(slider, { target: { value: '200' } })
@@ -104,17 +102,17 @@ describe('SliderWithInput', () => {
     expect(onChange).toHaveBeenCalledWith(200)
   })
 
-  it('should update inputValue correctly when input value is empty', async () => {
+  it('should set min value when input is empty', async () => {
     const user = userEvent.setup()
     const { input, onChange } = renderComponent()
 
     await user.clear(input)
 
-    expect(input).toHaveDisplayValue('')
+    expect(input.value).toBe('')
     expect(onChange).toHaveBeenCalledWith(50)
   })
 
-  it('should not update prices when input is blurred and value in input has not changed', async () => {
+  it('should not call onChange on blur if value was not changed', async () => {
     const user = userEvent.setup()
     const { input, onChange } = renderComponent()
 
@@ -125,10 +123,10 @@ describe('SliderWithInput', () => {
     fireEvent.blur(input)
 
     expect(onChange).not.toHaveBeenCalled()
-    expect(input).toHaveDisplayValue('100')
+    expect(input.value).toBe('100')
   })
 
-  it('should update prices when input is blurred and input is greater than max value', async () => {
+  it('should set max value on blur if input value is greater than max', async () => {
     const user = userEvent.setup()
     const { input } = renderComponent()
 
@@ -136,6 +134,6 @@ describe('SliderWithInput', () => {
     await user.type(input, '999')
     fireEvent.blur(input)
 
-    expect(input).toHaveDisplayValue('500')
+    expect(input.value).toBe('500')
   })
 })
