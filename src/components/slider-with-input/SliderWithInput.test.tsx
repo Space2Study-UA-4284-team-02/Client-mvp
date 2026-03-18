@@ -1,8 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import type { ComponentProps } from 'react'
 
 import SliderWithInput from './SliderWithInput'
+
+type SliderWithInputProps = ComponentProps<typeof SliderWithInput>
 
 vi.mock('~/hooks/use-debounce', () => ({
   useDebounce: (callback: (value: number) => void) => callback
@@ -29,14 +32,14 @@ vi.mock('@mui/material/Slider', () => ({
     value: number
     min: number
     max: number
-    onChange: (_event: Event, value: number) => void
+    onChange: (_event: Event, value: number | number[]) => void
   }) => (
     <input
       aria-label='slider'
       max={max}
       min={min}
       onChange={(event) =>
-        onChange(event as unknown as Event, Number(event.currentTarget.value))
+        onChange(event as unknown as Event, Number(event.target.value))
       }
       type='range'
       value={value}
@@ -44,33 +47,23 @@ vi.mock('@mui/material/Slider', () => ({
   )
 }))
 
-type SliderWithInputProps = {
-  defaultValue: number
-  title: string
-  min: number
-  max: number
-  onChange: (value: number) => void
-}
-
-type RenderComponentResult = {
-  onChange: ReturnType<typeof vi.fn>
-  slider: HTMLInputElement
-  input: HTMLInputElement
-}
-
 describe('SliderWithInput', () => {
-  const defaultProps: SliderWithInputProps = {
-    defaultValue: 100,
-    title: 'Price',
-    min: 50,
-    max: 500,
-    onChange: vi.fn()
-  }
-
   const renderComponent = (
     props: Partial<SliderWithInputProps> = {}
-  ): RenderComponentResult => {
+  ): {
+    onChange: ReturnType<typeof vi.fn>
+    slider: HTMLInputElement
+    input: HTMLInputElement
+  } => {
     const onChange = vi.fn()
+
+    const defaultProps: SliderWithInputProps = {
+      defaultValue: 100,
+      title: 'Price',
+      min: 50,
+      max: 500,
+      onChange
+    }
 
     render(<SliderWithInput {...defaultProps} {...props} onChange={onChange} />)
 
@@ -85,16 +78,16 @@ describe('SliderWithInput', () => {
     vi.clearAllMocks()
   })
 
-  it('should render correctly', () => {
+  it('should renders correctly', () => {
     const { slider, input } = renderComponent()
 
     expect(screen.getByText('Price')).toBeTruthy()
-    expect(slider).toBeTruthy()
-    expect(input).toBeTruthy()
+    expect(document.body.contains(slider)).toBe(true)
+    expect(document.body.contains(input)).toBe(true)
     expect(input.value).toBe('100')
   })
 
-  it('should call onChange when slider value changes', () => {
+  it('should call onChange when slider is moved', () => {
     const { slider, onChange } = renderComponent()
 
     fireEvent.change(slider, { target: { value: '200' } })
@@ -102,7 +95,7 @@ describe('SliderWithInput', () => {
     expect(onChange).toHaveBeenCalledWith(200)
   })
 
-  it('should set min value when input is empty', async () => {
+  it('should update inputValue correctly when input value is empty', async () => {
     const user = userEvent.setup()
     const { input, onChange } = renderComponent()
 
@@ -112,7 +105,7 @@ describe('SliderWithInput', () => {
     expect(onChange).toHaveBeenCalledWith(50)
   })
 
-  it('should not call onChange on blur if value was not changed', async () => {
+  it('should not update prices when input is blurred and value in input has not changed', async () => {
     const user = userEvent.setup()
     const { input, onChange } = renderComponent()
 
@@ -126,7 +119,7 @@ describe('SliderWithInput', () => {
     expect(input.value).toBe('100')
   })
 
-  it('should set max value on blur if input value is greater than max', async () => {
+  it('should update prices when input is blurred and input is greater than max value', async () => {
     const user = userEvent.setup()
     const { input } = renderComponent()
 
