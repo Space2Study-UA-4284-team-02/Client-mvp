@@ -106,26 +106,28 @@ describe('AppRange', () => {
     render(<AppRange max={100} min={0} onChange={() => {}} value={[10, 90]} />)
 
     const inputs = screen.getAllByRole('textbox')
+    const secondInput = inputs[1] as HTMLInputElement
 
-    fireEvent.change(inputs[1], {
+    fireEvent.change(secondInput, {
       target: { id: '1', value: '150' }
     })
-    fireEvent.blur(inputs[1], {
+    fireEvent.blur(secondInput, {
       target: { id: '1' }
     })
 
-    expect(inputs[1].value).toBe('100')
+    expect(secondInput.value).toBe('100')
   })
 
   test('it should not update prices when input is blurred and value in input has not changed', () => {
     render(<AppRange max={100} min={0} onChange={() => {}} value={[10, 90]} />)
 
     const inputs = screen.getAllByRole('textbox')
+    const firstInput = inputs[0] as HTMLInputElement
 
-    fireEvent.blur(inputs[0], {
+    fireEvent.blur(firstInput, {
       target: { id: '0' }
     })
 
-    expect(inputs[0].value).toBe('10')
+    expect(firstInput.value).toBe('10')
   })
 })
