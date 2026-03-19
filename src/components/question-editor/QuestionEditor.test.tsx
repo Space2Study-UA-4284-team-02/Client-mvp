@@ -129,6 +129,15 @@ const mockData = {
   answers: [{ id: 0, text: 'Option 1', isCorrect: false }]
 } as unknown as QuestionEditorProps['data']
 
+const createHandleInputChange = (
+  expectedKey: string,
+  changeHandler: (...args: unknown[]) => void
+) =>
+  vi.fn((key: string) => {
+    if (key === expectedKey) return changeHandler
+    return vi.fn()
+  })
+
 describe('QuestionEditor', () => {
   const renderComponent = (props: Partial<QuestionEditorProps> = {}) => {
     const handleInputChange = vi.fn(() => () => {})
@@ -158,11 +167,13 @@ describe('QuestionEditor', () => {
 
   it('should render question input field', () => {
     renderComponent()
+
     expect(screen.getByLabelText('questionPage.question')).toBeTruthy()
   })
 
   it('should render open answer field', () => {
     renderComponent()
+
     expect(screen.getByLabelText('questionPage.answer')).toBeTruthy()
   })
 
@@ -175,14 +186,21 @@ describe('QuestionEditor', () => {
     expect(handleNonInputValueChange).toHaveBeenCalled()
   })
 
-  it('should change question input field', async () => {
+  it.each([
+    {
+      field: 'text',
+      label: 'questionPage.question',
+      value: 'New question'
+    },
+    {
+      field: 'openAnswer',
+      label: 'questionPage.answer',
+      value: 'New answer'
+    }
+  ])('should change $field input field', async ({ field, label, value }) => {
     const user = userEvent.setup()
     const changeHandler = vi.fn()
-
-    const handleInputChange = vi.fn((key: string) => {
-      if (key === 'text') return changeHandler
-      return vi.fn()
-    })
+    const handleInputChange = createHandleInputChange(field, changeHandler)
 
     render(
       <QuestionEditor
@@ -192,36 +210,11 @@ describe('QuestionEditor', () => {
       />
     )
 
-    const input = screen.getByLabelText('questionPage.question')
+    const input = screen.getByLabelText(label)
 
-    await user.type(input, 'New question')
+    await user.type(input, value)
 
-    expect(handleInputChange).toHaveBeenCalledWith('text')
-    expect(changeHandler).toHaveBeenCalled()
-  })
-
-  it('should change answer input field', async () => {
-    const user = userEvent.setup()
-    const changeHandler = vi.fn()
-
-    const handleInputChange = vi.fn((key: string) => {
-      if (key === 'openAnswer') return changeHandler
-      return vi.fn()
-    })
-
-    render(
-      <QuestionEditor
-        data={mockData}
-        handleInputChange={handleInputChange}
-        handleNonInputValueChange={vi.fn()}
-      />
-    )
-
-    const input = screen.getByLabelText('questionPage.answer')
-
-    await user.type(input, 'New answer')
-
-    expect(handleInputChange).toHaveBeenCalledWith('openAnswer')
+    expect(handleInputChange).toHaveBeenCalledWith(field)
     expect(changeHandler).toHaveBeenCalled()
   })
 
