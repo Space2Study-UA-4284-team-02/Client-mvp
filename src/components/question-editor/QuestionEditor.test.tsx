@@ -12,6 +12,12 @@ import QuestionEditor from './QuestionEditor'
 
 type QuestionEditorProps = ComponentProps<typeof QuestionEditor>
 
+type InputChangeCase = {
+  field: 'text' | 'openAnswer'
+  label: 'questionPage.question' | 'questionPage.answer'
+  value: string
+}
+
 const openMenuMock = vi.fn()
 const closeMenuMock = vi.fn()
 
@@ -129,14 +135,28 @@ const mockData = {
   answers: [{ id: 0, text: 'Option 1', isCorrect: false }]
 } as unknown as QuestionEditorProps['data']
 
-const createHandleInputChange = (
-  expectedKey: string,
-  changeHandler: (...args: unknown[]) => void
-) =>
-  vi.fn((key: string) => {
+const inputChangeCases: InputChangeCase[] = [
+  {
+    field: 'text',
+    label: 'questionPage.question',
+    value: 'New question'
+  },
+  {
+    field: 'openAnswer',
+    label: 'questionPage.answer',
+    value: 'New answer'
+  }
+]
+
+const createHandleInputChange = (expectedKey: 'text' | 'openAnswer') => {
+  const changeHandler = vi.fn()
+  const handleInputChange = vi.fn((key: string) => {
     if (key === expectedKey) return changeHandler
-    return vi.fn()
+    return () => {}
   })
+
+  return { handleInputChange, changeHandler }
+}
 
 describe('QuestionEditor', () => {
   const renderComponent = (props: Partial<QuestionEditorProps> = {}) => {
@@ -186,31 +206,12 @@ describe('QuestionEditor', () => {
     expect(handleNonInputValueChange).toHaveBeenCalled()
   })
 
-  type InputChangeCase = {
-    field: 'text' | 'openAnswer'
-    label: 'questionPage.question' | 'questionPage.answer'
-    value: string
-  }
-
-  const inputChangeCases: InputChangeCase[] = [
-    {
-      field: 'text',
-      label: 'questionPage.question',
-      value: 'New question'
-    },
-    {
-      field: 'openAnswer',
-      label: 'questionPage.answer',
-      value: 'New answer'
-    }
-  ]
-
   it.each(inputChangeCases)(
     'should change $field input field',
     async ({ field, label, value }: InputChangeCase) => {
       const user = userEvent.setup()
-      const changeHandler = vi.fn()
-      const handleInputChange = createHandleInputChange(field, changeHandler)
+      const { handleInputChange, changeHandler } =
+        createHandleInputChange(field)
 
       render(
         <QuestionEditor
