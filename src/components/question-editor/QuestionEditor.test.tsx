@@ -186,7 +186,13 @@ describe('QuestionEditor', () => {
     expect(handleNonInputValueChange).toHaveBeenCalled()
   })
 
-  it.each([
+  type InputChangeCase = {
+    field: 'text' | 'openAnswer'
+    label: 'questionPage.question' | 'questionPage.answer'
+    value: string
+  }
+
+  const inputChangeCases: InputChangeCase[] = [
     {
       field: 'text',
       label: 'questionPage.question',
@@ -197,26 +203,31 @@ describe('QuestionEditor', () => {
       label: 'questionPage.answer',
       value: 'New answer'
     }
-  ])('should change $field input field', async ({ field, label, value }) => {
-    const user = userEvent.setup()
-    const changeHandler = vi.fn()
-    const handleInputChange = createHandleInputChange(field, changeHandler)
+  ]
 
-    render(
-      <QuestionEditor
-        data={mockData}
-        handleInputChange={handleInputChange}
-        handleNonInputValueChange={vi.fn()}
-      />
-    )
+  it.each(inputChangeCases)(
+    'should change $field input field',
+    async ({ field, label, value }: InputChangeCase) => {
+      const user = userEvent.setup()
+      const changeHandler = vi.fn()
+      const handleInputChange = createHandleInputChange(field, changeHandler)
 
-    const input = screen.getByLabelText(label)
+      render(
+        <QuestionEditor
+          data={mockData}
+          handleInputChange={handleInputChange}
+          handleNonInputValueChange={vi.fn()}
+        />
+      )
 
-    await user.type(input, value)
+      const input = screen.getByLabelText(label)
 
-    expect(handleInputChange).toHaveBeenCalledWith(field)
-    expect(changeHandler).toHaveBeenCalled()
-  })
+      await user.type(input, value)
+
+      expect(handleInputChange).toHaveBeenCalledWith(field)
+      expect(changeHandler).toHaveBeenCalled()
+    }
+  )
 
   it('should click on edit title and category', async () => {
     const user = userEvent.setup()
