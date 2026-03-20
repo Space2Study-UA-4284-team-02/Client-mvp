@@ -4,8 +4,8 @@ import Box, { BoxProps } from '@mui/material/Box'
 import AppButton from '../app-button/AppButton'
 
 import {
-  ButtonVariantEnum,
-  ComponentEnum
+    ButtonVariantEnum,
+    ComponentEnum
 } from '../../types/common/enums/common.enums'
 import { styles } from './ClickableImage.styles'
 
