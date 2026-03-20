@@ -25,13 +25,13 @@ jobs:
         run: npm install
         
       - name : Lint
-        run : npm run lint
+        run: npm run lint
         
       - name: Test with coverage
-        run: npm run test:coverage
+        run: npm test
         
-      - name : Check Path
-        run: ls -la && pwd && ls -la /
+      - name: Check Path
+        run: ls -la && pwd
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v6.0.0
