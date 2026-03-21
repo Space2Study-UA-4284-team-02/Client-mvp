@@ -23,30 +23,35 @@ jobs:
 
       - name: Npm Install
         run: npm install
-
-      - name: Lint
+        
+      - name : Lint
         run: npm run lint
-
-      - name: Test
+        
+      - name: Test with coverage
         run: npm test
-
+        
       - name: Check Path
-        run: ls -la && pwd && ls -la /
+        run: ls -la && pwd
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v6.0.0
         if: success() || failure()
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
+        with:
+          scannerVersion: 6.2.1.4610
+          args: >
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT }}
+            -Dsonar.organization=${{ secrets.SONAR_ORG }}
+            
   # Test_Docker:
   #   runs-on: ubuntu-latest
   #   steps:
 
   #     #Checkout Repository
   #     - uses: actions/checkout@v3
-
+      
   #     # Docker Build
   #     - uses: docker/build-push-action@v3
   #       with:
