@@ -205,6 +205,16 @@ const choiceQuestionData = {
   ]
 } as unknown as QuestionEditorProps['data']
 
+const dataWithEmptyLastAnswer = {
+  type: 'single',
+  text: 'Initial question',
+  openAnswer: '',
+  answers: [
+    { id: 0, text: 'Option 1', isCorrect: false },
+    { id: 1, text: '', isCorrect: false }
+  ]
+} as unknown as QuestionEditorProps['data']
+
 const inputChangeCases: InputChangeCase[] = [
   {
     field: 'text',
@@ -228,33 +238,33 @@ const createHandleInputChange = (expectedKey: string) => {
   return { handleInputChange, changeHandler }
 }
 
-describe('QuestionEditor', () => {
-  const renderComponent = (props: Partial<QuestionEditorProps> = {}) => {
-    const handleInputChange = vi.fn(() => () => {})
-    const handleNonInputValueChange = vi.fn()
-    const onEdit = vi.fn()
-    const onCancel = vi.fn()
-    const onSave = vi.fn()
+const renderComponent = (props: Partial<QuestionEditorProps> = {}) => {
+  const handleInputChange = vi.fn(() => () => {})
+  const handleNonInputValueChange = vi.fn()
+  const onEdit = vi.fn()
+  const onCancel = vi.fn()
+  const onSave = vi.fn()
 
-    render(
-      <QuestionEditor
-        data={mockData}
-        handleInputChange={handleInputChange}
-        handleNonInputValueChange={handleNonInputValueChange}
-        onCancel={onCancel}
-        onEdit={onEdit}
-        onSave={onSave}
-        {...props}
-      />
-    )
+  render(
+    <QuestionEditor
+      data={mockData}
+      handleInputChange={handleInputChange}
+      handleNonInputValueChange={handleNonInputValueChange}
+      onCancel={onCancel}
+      onEdit={onEdit}
+      onSave={onSave}
+      {...props}
+    />
+  )
 
-    return { handleInputChange, handleNonInputValueChange, onEdit }
-  }
+  return { handleInputChange, handleNonInputValueChange, onEdit }
+}
 
-  afterEach(() => {
-    vi.clearAllMocks()
-  })
+afterEach(() => {
+  vi.clearAllMocks()
+})
 
+describe('QuestionEditor - basic functionality', () => {
   it('should render question input field', () => {
     renderComponent()
 
@@ -313,7 +323,9 @@ describe('QuestionEditor', () => {
     expect(closeMenuMock).toHaveBeenCalled()
     expect(onEdit).toHaveBeenCalled()
   })
+})
 
+describe('QuestionEditor - answers', () => {
   it('should render answers for single choice question', () => {
     renderComponent({ data: choiceQuestionData })
 
@@ -366,16 +378,6 @@ describe('QuestionEditor', () => {
   it('should not add new answer if last answer is empty', async () => {
     const user = userEvent.setup()
     const handleNonInputValueChange = vi.fn()
-
-    const dataWithEmptyLastAnswer = {
-      type: 'single',
-      text: 'Initial question',
-      openAnswer: '',
-      answers: [
-        { id: 0, text: 'Option 1', isCorrect: false },
-        { id: 1, text: '', isCorrect: false }
-      ]
-    } as unknown as QuestionEditorProps['data']
 
     render(
       <QuestionEditor
