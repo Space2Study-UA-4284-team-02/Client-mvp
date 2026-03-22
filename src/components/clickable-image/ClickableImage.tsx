@@ -1,14 +1,22 @@
 import { FC, ReactNode } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
 
-import AppButton from '~/components/app-button/AppButton'
+import AppButton from '../app-button/AppButton'
 
-import { ComponentEnum, ButtonVariantEnum, Media } from '~/types'
-import { styles } from '~/components/clickable-image/ClickableImage.styles'
+import {
+  ButtonVariantEnum,
+  ComponentEnum
+} from '../../types/common/enums/common.enums'
+import { styles } from './ClickableImage.styles'
+
+type ClickableImageMedia = {
+  name: string
+  path: string
+}
 
 interface ClickableImageProps extends Omit<BoxProps, 'onClick'> {
-  onClick?: (image: Media) => void
-  image: Media
+  onClick?: (image: ClickableImageMedia) => void
+  image: ClickableImageMedia
   children?: ReactNode
 }
 
