@@ -17,6 +17,7 @@ import {
   mockData,
   renderComponent
 } from './QuestionEditor.test.helpers'
+import type { InputChangeCase } from './QuestionEditor.test.helpers'
 
 const openMenuMock = vi.fn()
 const closeMenuMock = vi.fn()
@@ -216,7 +217,7 @@ describe('QuestionEditor - basic functionality', () => {
 
   it.each(inputChangeCases)(
     'should change $field input field',
-    async ({ field, label, value }) => {
+    async ({ field, label, value }: InputChangeCase) => {
       const user = userEvent.setup()
       const { handleInputChange, changeHandler } =
         createHandleInputChange(field)
