@@ -87,6 +87,66 @@ vi.mock('~/components/app-select/AppSelect', () => ({
   )
 }))
 
+vi.mock('@mui/material/IconButton', () => ({
+  default: ({
+    children,
+    onClick
+  }: {
+    children?: ReactNode
+    onClick?: () => void
+  }) => <button onClick={onClick}>{children}</button>
+}))
+
+vi.mock('@mui/material/InputBase', () => ({
+  default: ({
+    value,
+    onChange,
+    placeholder
+  }: {
+    value: string
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void
+    placeholder?: string
+  }) => (
+    <input
+      aria-label={placeholder ?? 'answer-input'}
+      onChange={onChange}
+      value={value}
+    />
+  )
+}))
+
+vi.mock('@mui/material/FormControlLabel', () => ({
+  default: ({ label }: { label: ReactNode }) => <div>{label}</div>
+}))
+
+vi.mock('@mui/material/RadioGroup', () => ({
+  default: ({ children }: { children: ReactNode }) => <div>{children}</div>
+}))
+
+vi.mock('@mui/material/FormGroup', () => ({
+  default: ({ children }: { children: ReactNode }) => <div>{children}</div>
+}))
+
+vi.mock('@mui/material/Checkbox', () => ({
+  default: () => <input type='checkbox' />
+}))
+
+vi.mock('@mui/material/Radio', () => ({
+  default: () => <input type='radio' />
+}))
+
+vi.mock('@mui/icons-material/DeleteOutlineOutlined', () => ({
+  default: () => <span>delete-icon</span>
+}))
+
+vi.mock('@mui/icons-material/MoreVert', () => ({
+  default: () => <span>more-icon</span>
+}))
+
+vi.mock('@mui/icons-material/Add', () => ({
+  default: () => <span>add-icon</span>
+}))
+
 vi.mock('~/components/question-editor/QuestionEditor.constants', () => ({
   questionType: (type: string) => ({
     isMultipleChoice: type === 'multiple',
@@ -135,6 +195,16 @@ const mockData = {
   answers: [{ id: 0, text: 'Option 1', isCorrect: false }]
 } as unknown as QuestionEditorProps['data']
 
+const choiceQuestionData = {
+  type: 'single',
+  text: 'Initial question',
+  openAnswer: '',
+  answers: [
+    { id: 0, text: 'Option 1', isCorrect: false },
+    { id: 1, text: 'Option 2', isCorrect: false }
+  ]
+} as unknown as QuestionEditorProps['data']
+
 const inputChangeCases: InputChangeCase[] = [
   {
     field: 'text',
@@ -148,7 +218,7 @@ const inputChangeCases: InputChangeCase[] = [
   }
 ]
 
-const createHandleInputChange = (expectedKey: 'text' | 'openAnswer') => {
+const createHandleInputChange = (expectedKey: string) => {
   const changeHandler = vi.fn()
   const handleInputChange = vi.fn((key: string) => {
     if (key === expectedKey) return changeHandler
@@ -242,5 +312,83 @@ describe('QuestionEditor', () => {
 
     expect(closeMenuMock).toHaveBeenCalled()
     expect(onEdit).toHaveBeenCalled()
+  })
+
+  it('should render answers for single choice question', () => {
+    renderComponent({ data: choiceQuestionData })
+
+    expect(screen.getByDisplayValue('Option 1')).toBeTruthy()
+    expect(screen.getByDisplayValue('Option 2')).toBeTruthy()
+  })
+
+  it('should add new answer when add answer button is clicked', async () => {
+    const user = userEvent.setup()
+    const { handleNonInputValueChange } = renderComponent({
+      data: choiceQuestionData,
+      onCancel: undefined,
+      onSave: undefined,
+      onEdit: undefined
+    })
+
+    const addAnswerButton = screen.getByText('questionPage.addNewOne')
+
+    await user.click(addAnswerButton)
+
+    expect(handleNonInputValueChange).toHaveBeenCalledWith('answers', [
+      { id: 0, text: 'Option 1', isCorrect: false },
+      { id: 1, text: 'Option 2', isCorrect: false },
+      { id: 2, text: '', isCorrect: false }
+    ])
+  })
+
+  it('should delete answer when delete button is clicked', async () => {
+    const user = userEvent.setup()
+    const handleNonInputValueChange = vi.fn()
+
+    render(
+      <QuestionEditor
+        data={choiceQuestionData}
+        handleInputChange={vi.fn(() => () => {})}
+        handleNonInputValueChange={handleNonInputValueChange}
+      />
+    )
+
+    const buttons = screen.getAllByRole('button')
+    const deleteButton = buttons[0]
+
+    await user.click(deleteButton)
+
+    expect(handleNonInputValueChange).toHaveBeenCalledWith('answers', [
+      { id: 1, text: 'Option 2', isCorrect: false }
+    ])
+  })
+
+  it('should not add new answer if last answer is empty', async () => {
+    const user = userEvent.setup()
+    const handleNonInputValueChange = vi.fn()
+
+    const dataWithEmptyLastAnswer = {
+      type: 'single',
+      text: 'Initial question',
+      openAnswer: '',
+      answers: [
+        { id: 0, text: 'Option 1', isCorrect: false },
+        { id: 1, text: '', isCorrect: false }
+      ]
+    } as unknown as QuestionEditorProps['data']
+
+    render(
+      <QuestionEditor
+        data={dataWithEmptyLastAnswer}
+        handleInputChange={vi.fn(() => () => {})}
+        handleNonInputValueChange={handleNonInputValueChange}
+      />
+    )
+
+    const addAnswerButton = screen.getByText('questionPage.addNewOne')
+
+    await user.click(addAnswerButton)
+
+    expect(handleNonInputValueChange).not.toHaveBeenCalled()
   })
 })
