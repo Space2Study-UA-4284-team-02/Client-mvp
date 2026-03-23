@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import AppContentSwitcher from '~/components/app-content-switcher/AppContentSwitcher'
-import { renderWithProviders } from '~/tests/test-utils'
+import { renderWithProviders } from '~tests/test-utils'
 
 describe('AppContentSwitcher', () => {
   const onChangeMock = vi.fn()
