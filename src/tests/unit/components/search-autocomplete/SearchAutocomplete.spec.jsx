@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -5,92 +6,30 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import SearchAutocomplete from '~/components/search-autocomplete/SearchAutocomplete'
 import { renderWithProviders } from '~tests/test-utils'
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key) => (key === 'common.search' ? 'Search' : key)
-  })
-}))
+function ClearIconMock() {
+  return <span>ClearIcon</span>
+}
 
-vi.mock('~/hooks/use-breakpoints', () => ({
-  default: () => ({
-    isMobile: false
-  })
-}))
+function SearchIconMock() {
+  return <span>SearchIcon</span>
+}
 
-vi.mock('@mui/icons-material/Clear', () => ({
-  default: function ClearIconMock() {
-    return <span>ClearIcon</span>
+function IconButtonMock({ children, onClick }) {
+  const handleClick = () => {
+    onClick()
   }
-}))
 
-vi.mock('@mui/icons-material/Search', () => ({
-  default: function SearchIconMock() {
-    return <span>SearchIcon</span>
-  }
-}))
+  return (
+    <button data-testid='clear-button' onClick={handleClick} type='button'>
+      {children}
+    </button>
+  )
+}
 
-vi.mock('@mui/material/IconButton', () => ({
-  default: function IconButtonMock({ children, onClick }) {
-    const handleClick = () => {
-      onClick()
-    }
-
-    return (
-      <button data-testid='clear-button' onClick={handleClick} type='button'>
-        {children}
-      </button>
-    )
-  }
-}))
-
-vi.mock('~/components/app-auto-complete/AppAutoComplete', () => ({
-  default: function AppAutoCompleteMock({
-    options = [],
-    inputValue = '',
-    onInputChange,
-    onChange,
-    filterOptions,
-    textFieldProps = {}
-  }) {
-    const filteredOptions = filterOptions
-      ? filterOptions(options, {
-          inputValue,
-          getOptionLabel: (option) => option
-        })
-      : options
-
-    const handleInputChange = (event) => {
-      onInputChange(event, event.target.value)
-    }
-
-    const handleKeyDown = (event) => {
-      if (textFieldProps.onKeyDown) {
-        textFieldProps.onKeyDown(event)
-      }
-    }
-
-    return (
-      <div>
-        <input
-          aria-label='search-input'
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          value={inputValue}
-        />
-
-        <ul>
-          {filteredOptions.map((option) => (
-            <AutocompleteOption
-              key={option}
-              onChange={onChange}
-              option={option}
-            />
-          ))}
-        </ul>
-      </div>
-    )
-  }
-}))
+IconButtonMock.propTypes = {
+  children: PropTypes.node,
+  onClick: PropTypes.func.isRequired
+}
 
 function AutocompleteOption({ option, onChange }) {
   const handleOptionClick = () => {
@@ -106,6 +45,104 @@ function AutocompleteOption({ option, onChange }) {
   )
 }
 
+AutocompleteOption.propTypes = {
+  option: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired
+}
+
+function AppAutoCompleteMock({
+  options,
+  inputValue,
+  onInputChange,
+  onChange,
+  filterOptions,
+  textFieldProps
+}) {
+  const filteredOptions = filterOptions
+    ? filterOptions(options, {
+        inputValue,
+        getOptionLabel: (option) => option
+      })
+    : options
+
+  const handleInputChange = (event) => {
+    onInputChange(event, event.target.value)
+  }
+
+  const handleKeyDown = (event) => {
+    if (textFieldProps.onKeyDown) {
+      textFieldProps.onKeyDown(event)
+    }
+  }
+
+  return (
+    <div>
+      <input
+        aria-label='search-input'
+        onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
+        value={inputValue}
+      />
+
+      <ul>
+        {filteredOptions.map((option) => (
+          <AutocompleteOption
+            key={option}
+            onChange={onChange}
+            option={option}
+          />
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+AppAutoCompleteMock.propTypes = {
+  options: PropTypes.arrayOf(PropTypes.string),
+  inputValue: PropTypes.string,
+  onInputChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
+  filterOptions: PropTypes.func,
+  textFieldProps: PropTypes.shape({
+    onKeyDown: PropTypes.func
+  })
+}
+
+AppAutoCompleteMock.defaultProps = {
+  options: [],
+  inputValue: '',
+  filterOptions: undefined,
+  textFieldProps: {}
+}
+
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key) => (key === 'common.search' ? 'Search' : key)
+  })
+}))
+
+vi.mock('~/hooks/use-breakpoints', () => ({
+  default: () => ({
+    isMobile: false
+  })
+}))
+
+vi.mock('@mui/icons-material/Clear', () => ({
+  default: ClearIconMock
+}))
+
+vi.mock('@mui/icons-material/Search', () => ({
+  default: SearchIconMock
+}))
+
+vi.mock('@mui/material/IconButton', () => ({
+  default: IconButtonMock
+}))
+
+vi.mock('~/components/app-auto-complete/AppAutoComplete', () => ({
+  default: AppAutoCompleteMock
+}))
+
 describe('SearchAutocomplete', () => {
   const setSearch = vi.fn()
   const onSearchChange = vi.fn()
@@ -118,17 +155,14 @@ describe('SearchAutocomplete', () => {
     options: ['Apple', 'Apricot', 'Banana', 'Orange', 'Grape', 'Pineapple']
   }
 
-  const renderComponent = (props = {}) => {
-    return renderWithProviders(
-      <SearchAutocomplete {...defaultProps} {...props} />
-    )
-  }
+  const renderComponent = (props = {}) =>
+    renderWithProviders(<SearchAutocomplete {...defaultProps} {...props} />)
 
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('should renders autocomplete with search input', () => {
+  it('should render autocomplete with search input', () => {
     renderComponent()
 
     expect(
@@ -136,7 +170,7 @@ describe('SearchAutocomplete', () => {
     ).toBeInTheDocument()
   })
 
-  it('should updates search input on typing', async () => {
+  it('should update search input on typing', async () => {
     const user = userEvent.setup()
 
     renderComponent()
@@ -148,7 +182,7 @@ describe('SearchAutocomplete', () => {
     expect(input).toHaveValue('App')
   })
 
-  it('should filters options on typing', async () => {
+  it('should filter options on typing', async () => {
     const user = userEvent.setup()
 
     renderComponent()
@@ -167,7 +201,7 @@ describe('SearchAutocomplete', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('should selects an option on click', async () => {
+  it('should select an option on click', async () => {
     const user = userEvent.setup()
 
     renderComponent()
@@ -178,7 +212,7 @@ describe('SearchAutocomplete', () => {
     expect(setSearch).toHaveBeenCalledWith('Apple')
   })
 
-  it('should clears search input on clear icon click', async () => {
+  it('should clear search input on clear icon click', async () => {
     const user = userEvent.setup()
 
     renderComponent({ search: 'Apple' })
@@ -194,7 +228,7 @@ describe('SearchAutocomplete', () => {
     expect(setSearch).toHaveBeenCalledWith('')
   })
 
-  it('should triggers search on search button click', async () => {
+  it('should trigger search on search button click', async () => {
     const user = userEvent.setup()
 
     renderComponent()
