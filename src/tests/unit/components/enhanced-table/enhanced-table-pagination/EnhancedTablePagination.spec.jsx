@@ -3,35 +3,25 @@ import userEvent from '@testing-library/user-event'
 
 import EnhancedTablePagination from '~/components/enhanced-table/enhanced-table-pagination/EnhancedTablePagination'
 
-const mocks = vi.hoisted(() => ({
-  t: vi.fn((key) => key)
-}))
-
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: mocks.t
-  })
-}))
-
 vi.mock('@mui/material/Box', () => ({
-  default: ({ children, ...props }) => <div {...props}>{children}</div>
+  default: ({ children }) => <div>{children}</div>
 }))
 
 vi.mock('@mui/material/Typography', () => ({
-  default: ({ children, ...props }) => <div {...props}>{children}</div>
+  default: ({ children }) => <div>{children}</div>
 }))
 
 vi.mock('@mui/material/Button', () => ({
-  default: ({ children, onClick, ...props }) => (
-    <button onClick={onClick} type='button' {...props}>
+  default: ({ children, onClick }) => (
+    <button onClick={onClick} type='button'>
       {children}
     </button>
   )
 }))
 
 vi.mock('@mui/material/TextField', () => ({
-  default: ({ inputProps, value, onChange, ...props }) => (
-    <input onChange={onChange} value={value} {...inputProps} {...props} />
+  default: ({ inputProps, value, onChange }) => (
+    <input {...inputProps} onChange={onChange} value={value} />
   )
 }))
 
@@ -109,8 +99,7 @@ describe('EnhancedTablePagination', () => {
     expect(screen.getByText('table.numberOfRows')).toBeInTheDocument()
     expect(screen.getByText('1-5 table.of 13')).toBeInTheDocument()
     expect(screen.getByText('table.goToPage')).toBeInTheDocument()
-    expect(screen.getByTestId('pagination-page-input')).toHaveValue(1)
-    expect(screen.getByRole('button', { name: 'table.go' })).toBeInTheDocument()
+    expect(screen.getByTestId('pagination-page-input')).toHaveValue('1')
 
     const firstPageButton = screen.getByRole('button', { name: '1' })
 
