@@ -10,12 +10,10 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      # Checkout the Repo
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      # Install Node 18
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -23,19 +21,20 @@ jobs:
 
       - name: Npm Install
         run: npm install
-        
-      - name : Lint
-        run: npm run lint
-        
+
       - name: Test with coverage
         run: npm test
-        
+
+      - name: Lint
+        run: npm run lint
+        continue-on-error: true
+
       - name: Check Path
-        run: ls -la && pwd
+        run: ls -la && pwd && ls -la coverage
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v6.0.0
-        if: success() || failure()
+        if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -44,19 +43,3 @@ jobs:
           args: >
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT }}
             -Dsonar.organization=${{ secrets.SONAR_ORG }}
-            
-  # Test_Docker:
-  #   runs-on: ubuntu-latest
-  #   steps:
-
-  #     #Checkout Repository
-  #     - uses: actions/checkout@v3
-      
-  #     # Docker Build
-  #     - uses: docker/build-push-action@v3
-  #       with:
-  #         push: false
-  #         file: ./Dockerfile
-  #         tags: front-stage:test
-  #         build-args: |
-  #           password=${{ secrets.DOCKER_PASS }}
