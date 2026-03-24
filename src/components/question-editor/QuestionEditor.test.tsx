@@ -22,12 +22,6 @@ import type { InputChangeCase } from './QuestionEditor.test.helpers'
 const openMenuMock = vi.fn()
 const closeMenuMock = vi.fn()
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key
-  })
-}))
-
 vi.mock('~/hooks/use-menu', () => ({
   default: () => ({
     openMenu: openMenuMock,
