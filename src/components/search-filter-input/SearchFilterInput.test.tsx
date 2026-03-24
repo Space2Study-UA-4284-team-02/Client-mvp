@@ -12,12 +12,6 @@ import SearchFilterInput from './SearchFilterInput'
 
 type SearchFilterInputProps = ComponentProps<typeof SearchFilterInput>
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key
-  })
-}))
-
 vi.mock('~/components/app-button/AppButton', () => ({
   default: ({
     children,
