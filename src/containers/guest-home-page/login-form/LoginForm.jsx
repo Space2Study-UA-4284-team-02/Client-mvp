@@ -23,9 +23,7 @@ const LoginForm = ({
     useInputVisibility(errors.password)
 
   const { authLoading } = useSelector((state) => state.appMain)
-
   const { openModal } = useModalContext()
-
   const { t } = useTranslation()
 
   const openForgotPassword = () => {
@@ -35,21 +33,32 @@ const LoginForm = ({
   return (
     <Box component='form' onSubmit={handleSubmit} sx={styles.form}>
       <AppTextField
+        InputLabelProps={{
+          sx: {
+            px: '4px',
+            backgroundColor: '#fff'
+          }
+        }}
         autoFocus
-        data-testid={'email'}
+        data-testid='email'
         errorMsg={t(errors.email)}
         fullWidth
         label={t('common.labels.email')}
         onBlur={handleBlur('email')}
         onChange={handleChange('email')}
         required
-        size='large'
-        sx={{ mb: '5px' }}
+        sx={{ mb: '4px' }}
         type='email'
         value={data.email}
       />
 
       <AppTextField
+        InputLabelProps={{
+          sx: {
+            px: '4px',
+            backgroundColor: '#fff'
+          }
+        }}
         InputProps={passwordVisibility}
         errorMsg={t(errors.password)}
         fullWidth
@@ -57,6 +66,7 @@ const LoginForm = ({
         onBlur={handleBlur('password')}
         onChange={handleChange('password')}
         required
+        sx={{ mb: '2px' }}
         type={showPassword ? 'text' : 'password'}
         value={data.password}
       />

@@ -3,14 +3,16 @@ export const styles = {
     margin: { xs: '0 auto', sm: 0 },
     display: { xl: 'flex' },
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: { xs: 'flex-start', xl: 'center' },
     height: { xl: '100%' }
   },
-  contentWraper: { overflowY: { lg: 'auto' } },
+  contentWraper: {
+    overflowY: { lg: 'auto' }
+  },
   icon: {
     color: 'primary.900',
     position: 'absolute',
-    right: { xs: '8px', sm: '20px' },
-    top: { xs: '8px', sm: '20px' }
+    right: { xs: '10px', sm: '16px' },
+    top: { xs: '10px', sm: '16px' }
   }
 }
