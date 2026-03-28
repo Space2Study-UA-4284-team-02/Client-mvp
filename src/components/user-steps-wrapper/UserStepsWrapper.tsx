@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect } from 'react'
 import { useAppDispatch } from '~/hooks/use-redux'
 import { markFirstLoginComplete } from '~/redux/reducer'
 import StepWrapper from '~/components/step-wrapper/StepWrapper'
@@ -9,6 +9,7 @@ import GeneralInfoStep from '~/containers/tutor-home-page/general-info-step/Gene
 import AddPhotoStep from '~/containers/tutor-home-page/add-photo-step/AddPhotoStep'
 import SubjectsStep from '~/containers/tutor-home-page/subjects-step/SubjectsStep'
 import LanguageStep from '~/containers/tutor-home-page/language-step/LanguageStep'
+import InterestsStep from '~/containers/student-home-page/interests-step/InterestsStep'
 
 import {
   tutorStepLabels,
@@ -21,25 +22,24 @@ interface UserStepsWrapperProps {
 }
 
 const UserStepsWrapper: FC<UserStepsWrapperProps> = ({ userRole }) => {
-  const [isUserFetched, setIsUserFetched] = useState(false)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     dispatch(markFirstLoginComplete())
   }, [dispatch])
 
-  const childrenArr = [
-    <GeneralInfoStep
-      isUserFetched={isUserFetched}
-      key='1'
-      setIsUserFetched={setIsUserFetched}
-    />,
-    <SubjectsStep key='2' />,
-    <LanguageStep key='3' />,
-    <AddPhotoStep key='4' />
-  ]
+  const childrenArr =
+  userRole === student
+    ? [<InterestsStep key='1' btnsBox={null} />]
+    : [
+        <GeneralInfoStep key='1' btnsBox={null} />,
+        <SubjectsStep key='2' btnsBox={null} />,
+        <LanguageStep key='3' btnsBox={null} />,
+        <AddPhotoStep key='4' btnsBox={null} />
+      ]
 
-  const stepLabels = userRole === student ? '' : tutorStepLabels
+const stepLabels =
+  userRole === student ? ['interests'] : tutorStepLabels
 
   return (
     <StepProvider initialValues={initialValues} stepLabels={stepLabels}>
