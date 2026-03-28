@@ -13,13 +13,15 @@ interface PopupDialogProps {
   paperProps: PaperProps
   timerId: NodeJS.Timeout | null
   closeModalAfterDelay: (delay?: number) => void
+  closeModal: () => void
 }
 
 const PopupDialog: FC<PopupDialogProps> = ({
+  closeModal,
+  closeModalAfterDelay,
   content,
   paperProps,
-  timerId,
-  closeModalAfterDelay
+  timerId
 }) => {
   const { isMobile } = useBreakpoints()
 
@@ -28,12 +30,32 @@ const PopupDialog: FC<PopupDialogProps> = ({
 
   return (
     <Dialog
-      PaperProps={paperProps}
-      data-testid='popup'
-      disableRestoreFocus
+      PaperProps={{
+        ...paperProps,
+        sx: {
+          backgroundColor: '#fff',
+          width: '100%',
+          maxWidth: '100%',
+          height: '100%',
+          minHeight: '100%',
+          borderRadius: 0,
+          overflowX: 'hidden',
+          ...(paperProps?.sx || {})
+        }
+      }}
       fullScreen={isMobile}
-      maxWidth='xl'
+      maxWidth={false}
       open
+      sx={{
+        '& .MuiDialog-container': {
+          height: '100%',
+          margin: 0,
+          padding: 0
+        },
+        '& .MuiPaper-root': {
+          margin: 0
+        }
+      }}
     >
       <Box
         data-testid='popupContent'
@@ -41,8 +63,8 @@ const PopupDialog: FC<PopupDialogProps> = ({
         onMouseOver={handleMouseOver}
         sx={styles.box}
       >
-        <IconButton sx={styles.icon}>
-          <CloseIcon />
+        <IconButton onClick={closeModal} size='small' sx={styles.icon}>
+          <CloseIcon fontSize='small' />
         </IconButton>
         <Box sx={styles.contentWraper}>{content}</Box>
       </Box>

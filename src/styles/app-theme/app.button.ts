@@ -20,28 +20,41 @@ declare module '@mui/material/Button' {
 const button = {
   styleOverrides: {
     root: {
-      lineHeight: '20px',
-      fontSize: '14px',
-      opacity: '1'
+      lineHeight: '16px',
+      fontSize: '12px',
+      opacity: '1',
+      borderRadius: '3px',
+      textTransform: 'none',
+      boxShadow: 'none',
+      minHeight: '36px'
     },
     sizeSmall: {
       fontSize: '12px',
       padding: '6px 16px'
     },
     sizeMedium: {
-      padding: '10px 24px'
+      padding: '8px 20px'
     },
     sizeLarge: {
-      padding: '12px 24px',
-      fontSize: '16px'
+      padding: '6px 18px',
+      fontSize: '13px'
     },
     sizeExtraLarge: {
-      padding: '16px 32px',
-      fontSize: '16px'
+      padding: '10px 24px',
+      fontSize: '14px'
     },
     contained: {
       backgroundColor: palette.primary[900],
-      color: palette.primary[50]
+      color: palette.primary[50],
+      '&:hover': {
+        backgroundColor: palette.primary[900],
+        boxShadow: 'none'
+      },
+      '&.Mui-disabled': {
+        backgroundColor: palette.primary[900],
+        color: palette.primary[50],
+        opacity: 1
+      }
     },
     containedLight: {
       backgroundColor: palette.primary[500],
