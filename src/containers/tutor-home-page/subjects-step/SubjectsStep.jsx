@@ -109,6 +109,106 @@ const SubjectsStep = ({ btnsBox, stepLabel }) => {
     setIsExpanded((prev) => !prev)
   }
 
+  const renderSelects = () => (
+    <>
+      <Autocomplete
+        fullWidth
+        getOptionLabel={(option) => option.label}
+        isOptionEqualToValue={(option, value) => option.value === value.value}
+        onChange={handleCategoryChange}
+        onClose={() => setIsCategoryOpen(false)}
+        onOpen={() => setIsCategoryOpen(true)}
+        open={isCategoryOpen}
+        options={categoryOptions}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            InputProps={{
+              ...params.InputProps,
+              startAdornment: isCategoryOpen ? (
+                <InputAdornment position='start'>
+                  <SearchIcon sx={{ fontSize: '18px' }} />
+                </InputAdornment>
+              ) : null
+            }}
+            label='Main Study Category'
+            sx={styles.select}
+          />
+        )}
+        renderOption={(props, option) => (
+          <Box component='li' {...props} sx={styles.optionItem}>
+            <Typography component='span' sx={styles.optionTitle}>
+              {option.label}
+            </Typography>
+            <Typography component='span' sx={styles.optionCategory}>
+              Category: {option.category}
+            </Typography>
+          </Box>
+        )}
+        sx={styles.autocomplete}
+        value={selectedCategory}
+      />
+
+      <TextField
+        InputProps={{
+          startAdornment: isSubjectOpen ? (
+            <InputAdornment position='start'>
+              <SearchIcon sx={{ fontSize: '18px' }} />
+            </InputAdornment>
+          ) : null
+        }}
+        SelectProps={{
+          open: isSubjectOpen,
+          onOpen: () => setIsSubjectOpen(true),
+          onClose: () => setIsSubjectOpen(false)
+        }}
+        disabled={!selectedCategory}
+        fullWidth
+        label='Subject'
+        onChange={handleSubjectChange}
+        select
+        sx={styles.select}
+        value={subject}
+      >
+        {subjectOptions.map((opt) => (
+          <MenuItem key={opt} value={opt}>
+            {opt}
+          </MenuItem>
+        ))}
+      </TextField>
+    </>
+  )
+
+  const renderChips = () => (
+    <Box sx={styles.chipsWrapper}>
+      {visibleSubjects.map((item) => (
+        <Chip
+          deleteIcon={<CloseIcon sx={{ fontSize: '12px' }} />}
+          key={item}
+          label={item}
+          onDelete={() => handleDeleteSubject(item)}
+          sx={styles.chip}
+        />
+      ))}
+
+      {!isExpanded && hiddenSubjectsCount > 0 && (
+        <Chip
+          label={`+${hiddenSubjectsCount}`}
+          onClick={handleToggleSubjects}
+          sx={styles.moreChip}
+        />
+      )}
+
+      {isExpanded && subjects.length > MAX_VISIBLE_SUBJECTS && (
+        <Chip
+          label='Hide'
+          onClick={handleToggleSubjects}
+          sx={styles.moreChip}
+        />
+      )}
+    </Box>
+  )
+
   return (
     <Box sx={styles.container}>
       <Box sx={styles.leftBoxDesktop}>
@@ -136,73 +236,7 @@ const SubjectsStep = ({ btnsBox, stepLabel }) => {
             />
           </Box>
 
-          <Autocomplete
-            fullWidth
-            getOptionLabel={(option) => option.label}
-            isOptionEqualToValue={(option, value) =>
-              option.value === value.value
-            }
-            onChange={handleCategoryChange}
-            onClose={() => setIsCategoryOpen(false)}
-            onOpen={() => setIsCategoryOpen(true)}
-            open={isCategoryOpen}
-            options={categoryOptions}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: isCategoryOpen ? (
-                    <InputAdornment position='start'>
-                      <SearchIcon sx={{ fontSize: '18px' }} />
-                    </InputAdornment>
-                  ) : null
-                }}
-                label='Main Study Category'
-                sx={styles.select}
-              />
-            )}
-            renderOption={(props, option) => (
-              <Box component='li' {...props} sx={styles.optionItem}>
-                <Typography component='span' sx={styles.optionTitle}>
-                  {option.label}
-                </Typography>
-                <Typography component='span' sx={styles.optionCategory}>
-                  Category: {option.category}
-                </Typography>
-              </Box>
-            )}
-            sx={styles.autocomplete}
-            value={selectedCategory}
-          />
-
-          <TextField
-            InputProps={{
-              startAdornment: isSubjectOpen ? (
-                <InputAdornment position='start'>
-                  <SearchIcon sx={{ fontSize: '18px' }} />
-                </InputAdornment>
-              ) : null
-            }}
-            SelectProps={{
-              open: isSubjectOpen,
-              onOpen: () => setIsSubjectOpen(true),
-              onClose: () => setIsSubjectOpen(false)
-            }}
-            disabled={!selectedCategory}
-            fullWidth
-            label='Subject'
-            onChange={handleSubjectChange}
-            select
-            sx={styles.select}
-            value={subject}
-          >
-            {subjectOptions.map((opt) => (
-              <MenuItem key={opt} value={opt}>
-                {opt}
-              </MenuItem>
-            ))}
-          </TextField>
+          {renderSelects()}
 
           <Button
             disabled={!selectedCategory || !subject}
@@ -214,33 +248,7 @@ const SubjectsStep = ({ btnsBox, stepLabel }) => {
             Add one more subject
           </Button>
 
-          <Box sx={styles.chipsWrapper}>
-            {visibleSubjects.map((item) => (
-              <Chip
-                deleteIcon={<CloseIcon sx={{ fontSize: '12px' }} />}
-                key={item}
-                label={item}
-                onDelete={() => handleDeleteSubject(item)}
-                sx={styles.chip}
-              />
-            ))}
-
-            {!isExpanded && hiddenSubjectsCount > 0 && (
-              <Chip
-                label={`+${hiddenSubjectsCount}`}
-                onClick={handleToggleSubjects}
-                sx={styles.moreChip}
-              />
-            )}
-
-            {isExpanded && subjects.length > MAX_VISIBLE_SUBJECTS && (
-              <Chip
-                label='Hide'
-                onClick={handleToggleSubjects}
-                sx={styles.moreChip}
-              />
-            )}
-          </Box>
+          {renderChips()}
         </Box>
 
         <Box sx={styles.buttonsBox}>{btnsBox}</Box>
