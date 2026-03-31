@@ -73,9 +73,9 @@ const GeneralInfoStep = ({ btnsBox, stepLabel, flow, user }) => {
     load()
   }, [data.country])
 
-  const syncToContext = () => {
+  useEffect(() => {
     handleStepData(stepLabel, data, errors)
-  }
+  }, [stepLabel, data, errors, handleStepData])
 
   return (
     <Box sx={styles.container}>
@@ -103,7 +103,6 @@ const GeneralInfoStep = ({ btnsBox, stepLabel, flow, user }) => {
             label={t('common.labels.firstName') + ' *'}
             onBlur={(e) => {
               handleBlur('firstName')(e)
-              syncToContext()
             }}
             onChange={handleInputChange('firstName')}
             sx={{ width: '100%' }}
@@ -116,7 +115,6 @@ const GeneralInfoStep = ({ btnsBox, stepLabel, flow, user }) => {
             label={t('common.labels.lastName') + ' *'}
             onBlur={(e) => {
               handleBlur('lastName')(e)
-              syncToContext()
             }}
             onChange={handleInputChange('lastName')}
             sx={{ width: '100%' }}
@@ -137,7 +135,6 @@ const GeneralInfoStep = ({ btnsBox, stepLabel, flow, user }) => {
               handleNonInputValueChange('country', value?.value || '')
               handleNonInputValueChange('city', '')
               setCities([])
-              syncToContext()
             }}
             options={countries}
             renderInput={(params) => (
@@ -161,7 +158,6 @@ const GeneralInfoStep = ({ btnsBox, stepLabel, flow, user }) => {
             }
             onChange={(e, value) => {
               handleNonInputValueChange('city', value?.value || '')
-              syncToContext()
             }}
             options={cities}
             renderInput={(params) => (
@@ -187,11 +183,9 @@ const GeneralInfoStep = ({ btnsBox, stepLabel, flow, user }) => {
           maxLength={MAX_LENGTH}
           onBlur={(e) => {
             handleBlur('professionalSummary')(e)
-            syncToContext()
           }}
           onChange={(e) => {
             handleInputChange('professionalSummary')(e)
-            syncToContext()
           }}
           value={data.professionalSummary}
         />
@@ -205,7 +199,6 @@ const GeneralInfoStep = ({ btnsBox, stepLabel, flow, user }) => {
                   checked={data.confirmAge}
                   onChange={(e) => {
                     handleNonInputValueChange('confirmAge', e.target.checked)
-                    syncToContext()
                   }}
                 />
               }

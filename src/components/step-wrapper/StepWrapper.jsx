@@ -11,6 +11,7 @@ import AppButton from '~/components/app-button/AppButton'
 import useSteps from '~/hooks/use-steps'
 import { styles } from '~/components/step-wrapper/StepWrapper.styles'
 import { useStepContext } from '~/context/step-context'
+import { requiredFieldSteps } from '~/components/user-steps-wrapper/constants'
 
 const StepWrapper = ({ children, steps, flow, user }) => {
   const { activeStep, stepErrors, isLastStep, loading, stepOperation } =
@@ -21,25 +22,18 @@ const StepWrapper = ({ children, steps, flow, user }) => {
   const { t } = useTranslation()
   const { stepData } = useStepContext()
 
-  const requiredFieldsByStep = {
-    generalInfo: (flow) =>
-      flow === 'student'
-        ? ['firstName', 'lastName', 'confirmAge']
-        : ['firstName', 'lastName'],
-    subjects: ['subjects'],
-    language: ['language'],
-    photo: ['photo']
-  }
-
   const isStepValid = (stepName, data, errors, flow) => {
-    const getFields = requiredFieldsByStep[stepName]
-    const requiredFields =
-      typeof getFields === 'function' ? getFields(flow) : []
+    const getFields = requiredFieldSteps[stepName]
+    const requiredFields = Array.isArray(getFields)
+      ? getFields
+      : typeof getFields === 'function'
+        ? getFields(flow)
+        : []
 
     const hasEmptyRequired = requiredFields.some((field) => {
       const value = data?.[field]
-
       if (typeof value === 'boolean') return !value
+      if (Array.isArray(value)) return value.length === 0
 
       return value === '' || value === null || value === undefined
     })
@@ -50,8 +44,19 @@ const StepWrapper = ({ children, steps, flow, user }) => {
   }
 
   const currentStepName = steps[activeStep]
-  const currentStepData = stepData?.[currentStepName]?.data || {}
-  const currentStepErrors = stepData?.[currentStepName]?.errors || {}
+  const currentStepState = stepData?.[currentStepName]
+  const currentStepData =
+    currentStepState &&
+    typeof currentStepState === 'object' &&
+    'data' in currentStepState
+      ? currentStepState.data
+      : { [currentStepName]: currentStepState }
+  const currentStepErrors =
+    currentStepState &&
+    typeof currentStepState === 'object' &&
+    'errors' in currentStepState
+      ? currentStepState.errors
+      : {}
 
   const isDisabled = !isStepValid(
     currentStepName,

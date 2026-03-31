@@ -23,3 +23,13 @@ export const studentStepLabels = [
   'language',
   'photo'
 ]
+
+export const requiredFieldSteps = {
+  generalInfo: (currentFlow: string) =>
+    currentFlow === 'student'
+      ? ['firstName', 'lastName', 'confirmAge']
+      : ['firstName', 'lastName'],
+  interests: ['interests'],
+  language: ['language'],
+  photo: ['photo']
+}

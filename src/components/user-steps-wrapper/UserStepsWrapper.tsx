@@ -43,7 +43,6 @@ const UserStepsWrapper: FC<UserStepsWrapperProps> = ({ userRole }) => {
           stepLabel={undefined}
           user={user}
         />,
-        // eslint-disable-next-line react/jsx-no-undef
         <InterestsStep btnsBox={undefined} key='interests' />,
         <LanguageStep btnsBox={undefined} key='language' />,
         <AddPhotoStep btnsBox={undefined} key='photo' />

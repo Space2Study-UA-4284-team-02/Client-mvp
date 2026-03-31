@@ -139,7 +139,7 @@ vi.mock('@mui/material/IconButton', () => ({
   default: IconButtonMock
 }))
 
-vi.mock('~/components/app-auto-complete/AppAutoComplete', () => ({
+vi.mock('~/components/app-auto-comlete/AppAutoComplete', () => ({
   default: AppAutoCompleteMock
 }))
 
