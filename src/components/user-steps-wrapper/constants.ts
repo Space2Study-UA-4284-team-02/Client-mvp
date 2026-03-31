@@ -5,7 +5,8 @@ export const initialValues = {
   lastName: '',
   country: null,
   city: null,
-  professionalSummary: ''
+  professionalSummary: '',
+  confirmAge: false
 }
 
 export const validations = {
@@ -15,3 +16,20 @@ export const validations = {
 }
 
 export const tutorStepLabels = ['generalInfo', 'subjects', 'language', 'photo']
+
+export const studentStepLabels = [
+  'generalInfo',
+  'interests',
+  'language',
+  'photo'
+]
+
+export const requiredFieldSteps = {
+  generalInfo: (currentFlow: string) =>
+    currentFlow === 'student'
+      ? ['firstName', 'lastName', 'confirmAge']
+      : ['firstName', 'lastName'],
+  interests: ['interests'],
+  language: ['language'],
+  photo: ['photo']
+}

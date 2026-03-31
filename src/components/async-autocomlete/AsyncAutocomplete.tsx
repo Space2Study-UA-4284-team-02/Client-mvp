@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { AutocompleteProps } from '@mui/material/Autocomplete'
 import { TextFieldProps } from '@mui/material/TextField'
 
-import AppAutoComplete from '~/components/app-auto-complete/AppAutoComplete'
+import AppAutoComplete from '~/components/app-auto-comlete/AppAutoComplete'
 import useAxios, { UseAxiosProps } from '~/hooks/use-axios'
 import { defaultResponses } from '~/constants'
 import { ServiceFunction, Category } from '~/types'

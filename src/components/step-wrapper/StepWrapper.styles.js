@@ -40,7 +40,7 @@ export const styles = {
     columnGap: '1px'
   },
   stepContent: {
-    display: { xs: 'flex', sm: 'block' },
+    display: 'flex',
     justifyContent: 'center',
     flex: 1,
     mt: { xs: '24px', sm: '30px' }
