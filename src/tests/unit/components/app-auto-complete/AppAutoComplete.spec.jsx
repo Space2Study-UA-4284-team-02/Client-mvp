@@ -1,5 +1,5 @@
 import { fireEvent, screen } from '@testing-library/react'
-import AppAutoComplete from '~/components/app-auto-complete/AppAutoComplete'
+import AppAutoComplete from '~/components/app-auto-comlete/AppAutoComplete'
 import { renderWithProviders } from '~tests/test-utils'
 import { vi } from 'vitest'
 

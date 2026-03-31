@@ -10,14 +10,55 @@ import WestIcon from '@mui/icons-material/West'
 import AppButton from '~/components/app-button/AppButton'
 import useSteps from '~/hooks/use-steps'
 import { styles } from '~/components/step-wrapper/StepWrapper.styles'
+import { useStepContext } from '~/context/step-context'
 
-const StepWrapper = ({ children, steps }) => {
+const StepWrapper = ({ children, steps, flow, user }) => {
   const { activeStep, stepErrors, isLastStep, loading, stepOperation } =
     useSteps({
       steps
     })
   const { next, back, setActiveStep, handleSubmit } = stepOperation
   const { t } = useTranslation()
+  const { stepData } = useStepContext()
+
+  const requiredFieldsByStep = {
+    generalInfo: (flow) =>
+      flow === 'student'
+        ? ['firstName', 'lastName', 'confirmAge']
+        : ['firstName', 'lastName'],
+    subjects: ['subjects'],
+    language: ['language'],
+    photo: ['photo']
+  }
+
+  const isStepValid = (stepName, data, errors, flow) => {
+    const getFields = requiredFieldsByStep[stepName]
+    const requiredFields =
+      typeof getFields === 'function' ? getFields(flow) : []
+
+    const hasEmptyRequired = requiredFields.some((field) => {
+      const value = data?.[field]
+
+      if (typeof value === 'boolean') return !value
+
+      return value === '' || value === null || value === undefined
+    })
+
+    const hasErrors = Object.values(errors || {}).some(Boolean)
+
+    return !hasEmptyRequired && !hasErrors
+  }
+
+  const currentStepName = steps[activeStep]
+  const currentStepData = stepData?.[currentStepName]?.data || {}
+  const currentStepErrors = stepData?.[currentStepName]?.errors || {}
+
+  const isDisabled = !isStepValid(
+    currentStepName,
+    currentStepData,
+    currentStepErrors,
+    flow
+  )
 
   const stepLabels = steps.map((step, index) => (
     <Box
@@ -42,7 +83,13 @@ const StepWrapper = ({ children, steps }) => {
       {t('common.finish')}
     </AppButton>
   ) : (
-    <AppButton onClick={next} size='small' sx={styles.btn} variant='contained'>
+    <AppButton
+      disabled={isDisabled}
+      onClick={next}
+      size='small'
+      sx={styles.btn}
+      variant='contained'
+    >
       {t('common.next')}
       <EastIcon fontSize='small' />
     </AppButton>
@@ -70,7 +117,9 @@ const StepWrapper = ({ children, steps }) => {
       <Box sx={styles.stepContent}>
         {cloneElement(children[activeStep], {
           btnsBox,
-          stepLabel: steps[activeStep]
+          stepLabel: steps[activeStep],
+          flow,
+          user
         })}
       </Box>
     </Container>

@@ -20,6 +20,9 @@ import { home } from '~/router/constants/crumbs'
 
 const HomeRoute = lazy(() => import('~/router/helpers/HomeRoute'))
 const Logout = lazy(() => import('~/pages/logout/Logout'))
+const TestPageGeneralStep = lazy(
+  () => import('~/pages/test-general-info/TestPageGeneralStep') // Delete this page after testing, it is used to check the general info step of the user steps wrapper component
+)
 
 export const routerConfig = (
   <Route
@@ -29,6 +32,9 @@ export const routerConfig = (
   >
     <Route element={<AppContent />} handle={{ crumb: home }}>
       <Route element={<HomeRoute />} index />
+      <Route element={<TestPageGeneralStep />} path={'general-info-test'} />
+      {/* Delete this route after testing, it is used to check the general info step
+      of the user steps wrapper component */}
       {guestRouter}
       {authRouter}
       {tutorRouter}

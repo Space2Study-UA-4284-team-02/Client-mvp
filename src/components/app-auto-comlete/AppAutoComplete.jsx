@@ -1,8 +1,8 @@
 import { Fragment } from 'react'
 
 import TextField from '@mui/material/TextField'
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete'
-
+import Autocomplete from '@mui/material/Autocomplete'
+import { createFilterOptions } from '@mui/material'
 import Loader from '~/components/loader/Loader'
 
 const defaultFilterOptions = (options, state) => {

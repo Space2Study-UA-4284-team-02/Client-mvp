@@ -10,7 +10,7 @@ import {
 import { useTranslation } from 'react-i18next'
 
 import { createFilterOptions, FilterOptionsState } from '@mui/material'
-import {
+import type {
   AutocompleteProps,
   AutocompleteRenderInputParams
 } from '@mui/material/Autocomplete'
@@ -21,7 +21,7 @@ import IconButton from '@mui/material/IconButton'
 import ClearIcon from '@mui/icons-material/Clear'
 import SearchIcon from '@mui/icons-material/Search'
 
-import AppAutoComplete from '~/components/app-auto-complete/AppAutoComplete'
+import AppAutoComplete from '~/components/app-auto-comlete/AppAutoComplete'
 import useBreakpoints from '~/hooks/use-breakpoints'
 import { styles } from '~/components/search-autocomplete/SearchAutocomplete.styles'
 import {
