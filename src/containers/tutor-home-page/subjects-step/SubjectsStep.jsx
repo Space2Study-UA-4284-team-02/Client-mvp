@@ -50,6 +50,39 @@ const subjectOptionsMap = {
 
 const MAX_VISIBLE_SUBJECTS = 6
 
+const renderChips = ({
+  visibleSubjects,
+  hiddenSubjectsCount,
+  isExpanded,
+  subjects,
+  handleDeleteSubject,
+  handleToggleSubjects
+}) => (
+  <Box sx={styles.chipsWrapper}>
+    {visibleSubjects.map((item) => (
+      <Chip
+        deleteIcon={<CloseIcon sx={{ fontSize: '12px' }} />}
+        key={item}
+        label={item}
+        onDelete={() => handleDeleteSubject(item)}
+        sx={styles.chip}
+      />
+    ))}
+
+    {!isExpanded && hiddenSubjectsCount > 0 && (
+      <Chip
+        label={`+${hiddenSubjectsCount}`}
+        onClick={handleToggleSubjects}
+        sx={styles.moreChip}
+      />
+    )}
+
+    {isExpanded && subjects.length > MAX_VISIBLE_SUBJECTS && (
+      <Chip label='Hide' onClick={handleToggleSubjects} sx={styles.moreChip} />
+    )}
+  </Box>
+)
+
 const SubjectsStep = ({ btnsBox, stepLabel }) => {
   const { stepData, handleStepData } = useStepContext()
 
@@ -179,36 +212,6 @@ const SubjectsStep = ({ btnsBox, stepLabel }) => {
     </>
   )
 
-  const renderChips = () => (
-    <Box sx={styles.chipsWrapper}>
-      {visibleSubjects.map((item) => (
-        <Chip
-          deleteIcon={<CloseIcon sx={{ fontSize: '12px' }} />}
-          key={item}
-          label={item}
-          onDelete={() => handleDeleteSubject(item)}
-          sx={styles.chip}
-        />
-      ))}
-
-      {!isExpanded && hiddenSubjectsCount > 0 && (
-        <Chip
-          label={`+${hiddenSubjectsCount}`}
-          onClick={handleToggleSubjects}
-          sx={styles.moreChip}
-        />
-      )}
-
-      {isExpanded && subjects.length > MAX_VISIBLE_SUBJECTS && (
-        <Chip
-          label='Hide'
-          onClick={handleToggleSubjects}
-          sx={styles.moreChip}
-        />
-      )}
-    </Box>
-  )
-
   return (
     <Box sx={styles.container}>
       <Box sx={styles.leftBoxDesktop}>
@@ -248,7 +251,14 @@ const SubjectsStep = ({ btnsBox, stepLabel }) => {
             Add one more subject
           </Button>
 
-          {renderChips()}
+          {renderChips({
+            visibleSubjects,
+            hiddenSubjectsCount,
+            isExpanded,
+            subjects,
+            handleDeleteSubject,
+            handleToggleSubjects
+          })}
         </Box>
 
         <Box sx={styles.buttonsBox}>{btnsBox}</Box>
