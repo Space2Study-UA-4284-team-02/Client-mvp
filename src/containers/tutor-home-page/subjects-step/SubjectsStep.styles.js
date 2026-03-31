@@ -1,57 +1,122 @@
 export const styles = {
   container: {
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    gap: '72px',
-    maxWidth: '1120px',
-    margin: '0 auto',
-    paddingTop: '32px'
+    flexDirection: 'column',
+    width: '100%',
+    paddingTop: '20px',
+    paddingLeft: '10px',
+    paddingRight: '10px',
+    paddingBottom: '20px',
+
+    '@media (min-width: 768px)': {
+      paddingTop: '24px',
+      paddingLeft: '16px',
+      paddingRight: '16px',
+      paddingBottom: '24px'
+    },
+
+    '@media (min-width: 1200px)': {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      gap: '72px',
+      maxWidth: '1120px',
+      margin: '0 auto',
+      paddingTop: '32px',
+      paddingLeft: 0,
+      paddingRight: 0,
+      paddingBottom: 0
+    }
   },
 
-  leftBox: {
-    width: '48%',
+  leftBoxDesktop: {
+    display: 'none',
+
+    '@media (min-width: 1200px)': {
+      display: 'flex',
+      width: '48%',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }
+  },
+
+  leftBoxMobile: {
+    width: '100%',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: '24px',
+    marginBottom: '20px',
+
+    '@media (min-width: 1200px)': {
+      display: 'none'
+    }
   },
 
   image: {
     width: '100%',
-    maxWidth: '420px',
+    maxWidth: '200px',
     height: 'auto',
-    objectFit: 'contain'
+    objectFit: 'contain',
+
+    '@media (min-width: 768px)': {
+      maxWidth: '280px'
+    },
+
+    '@media (min-width: 1200px)': {
+      maxWidth: '420px'
+    }
   },
 
   rightBox: {
-    width: '52%',
-    maxWidth: '540px',
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
-    minHeight: '560px'
+
+    '@media (min-width: 1200px)': {
+      width: '52%',
+      maxWidth: '540px',
+      minHeight: '560px'
+    }
   },
 
   topBox: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '22px'
+    gap: '16px',
+
+    '@media (min-width: 1200px)': {
+      gap: '22px'
+    }
   },
 
   description: {
-    maxWidth: '460px',
-    fontSize: '14px',
+    maxWidth: '100%',
+    fontSize: '11.3px',
     lineHeight: '22px',
-    fontWeight: 400,
+    fontWeight: 500,
     color: '#000000',
     fontFamily: 'Inter, sans-serif',
-    letterSpacing: '0'
+    letterSpacing: '0',
+    marginBottom: '4px',
+
+    '@media (min-width: 1200px)': {
+      maxWidth: '460px',
+      marginBottom: 0,
+      fontSize: '14px',
+      lineHeight: '22px'
+    }
   },
 
   select: {
     '& .MuiOutlinedInput-root': {
-      height: '54px',
+      height: '48px',
       backgroundColor: '#f8fafb',
       borderRadius: '4px',
+
+      '@media (min-width: 1200px)': {
+        height: '54px'
+      },
 
       '& fieldset': {
         borderColor: '#bcc9d3'
@@ -68,12 +133,35 @@ export const styles = {
 
     '& .MuiInputLabel-root': {
       fontSize: '14px',
+      color: '#8a9ba8',
+      transform: 'translate(14px, 13px) scale(1)',
+      transition: 'transform 0.2s ease, color 0.2s ease',
+
+      '@media (min-width: 1200px)': {
+        transform: 'translate(14px, 16px) scale(1)'
+      }
+    },
+
+    '& .MuiInputLabel-root.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -9px) scale(0.75)'
+    },
+
+    '& .MuiInputLabel-root.Mui-focused': {
       color: '#8a9ba8'
+    },
+
+    '& .MuiInputBase-input': {
+      fontSize: '14px',
+      fontFamily: 'Inter, sans-serif',
+      color: '#263238'
     },
 
     '& .MuiSelect-select': {
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      fontSize: '14px',
+      fontFamily: 'Inter, sans-serif',
+      color: '#263238'
     }
   },
 
@@ -90,8 +178,13 @@ export const styles = {
   optionItem: {
     display: 'flex',
     alignItems: 'center',
-    gap: '10px',
-    minHeight: '52px'
+    gap: '8px',
+    minHeight: '44px',
+
+    '@media (min-width: 1200px)': {
+      gap: '10px',
+      minHeight: '52px'
+    }
   },
 
   optionTitle: {
@@ -109,14 +202,15 @@ export const styles = {
   },
 
   addButton: {
-    height: '44px',
+    height: '50px',
     backgroundColor: '#e7ecef',
-    color: '#2f3b45',
+    color: '#404040',
     fontWeight: 600,
     fontSize: '14px',
     textTransform: 'none',
     borderRadius: '4px',
     boxShadow: 'none',
+    marginTop: '6px',
 
     '&:hover': {
       backgroundColor: '#dfe6ea',
@@ -125,78 +219,119 @@ export const styles = {
 
     '&.Mui-disabled': {
       backgroundColor: '#edf1f4',
-      color: '#9aa9b5'
+      color: '#404040'
+    },
+
+    '@media (min-width: 1200px)': {
+      height: '44px',
+      marginTop: '2px'
     }
   },
 
   chipsWrapper: {
     display: 'flex',
     flexWrap: 'wrap',
-    gap: '8px',
+    gap: '12px',
     minHeight: '40px',
-    marginTop: '4px'
+    marginTop: '8px',
+
+    '@media (min-width: 1200px)': {
+      gap: '8px',
+      marginTop: '4px'
+    }
   },
 
   chip: {
-    height: '36px',
-    backgroundColor: '#E9EEF1',
-    borderRadius: '10px',
-    color: '#586065',
+    height: '48px',
+    backgroundColor: '#e9eef1',
+    borderRadius: '14px',
+    color: '#4e6070',
     fontSize: '12px',
     fontWeight: 550,
     fontFamily: 'Inter, sans-serif',
     cursor: 'pointer',
 
+    '@media (min-width: 1200px)': {
+      height: '36px',
+      borderRadius: '10px'
+    },
+
     '& .MuiChip-label': {
-      paddingLeft: '10px',
-      paddingRight: '15px',
-      lineHeight: '28px'
+      paddingLeft: '16px',
+      paddingRight: '12px',
+      lineHeight: '48px',
+
+      '@media (min-width: 1200px)': {
+        paddingLeft: '10px',
+        paddingRight: '15px',
+        lineHeight: '28px'
+      }
     },
 
     '& .MuiChip-deleteIcon': {
-      margin: '0 8px 0 0',
+      margin: '0 12px 0 0',
       color: '#5b5b5b',
-      fontSize: '17px',
+      fontSize: '22px',
 
       '&:hover': {
         color: '#5F7381'
+      },
+
+      '@media (min-width: 1200px)': {
+        margin: '0 8px 0 0',
+        fontSize: '17px'
       }
     }
   },
 
   moreChip: {
-    height: '36px',
-    backgroundColor: '#E9EEF1',
-    borderRadius: '10px',
-    color: '#586065',
+    height: '48px',
+    backgroundColor: '#e9eef1',
+    borderRadius: '14px',
+    color: '#4e6070',
     fontSize: '12px',
     fontWeight: 550,
     fontFamily: 'Inter, sans-serif',
     cursor: 'pointer',
 
+    '@media (min-width: 1200px)': {
+      height: '36px',
+      borderRadius: '10px'
+    },
+
     '& .MuiChip-label': {
-      paddingLeft: '12px',
-      paddingRight: '12px',
-      lineHeight: '28px'
+      paddingLeft: '18px',
+      paddingRight: '18px',
+      lineHeight: '48px',
+
+      '@media (min-width: 1200px)': {
+        paddingLeft: '12px',
+        paddingRight: '12px',
+        lineHeight: '28px'
+      }
     }
   },
 
   buttonsBox: {
-    marginTop: 'auto',
-    paddingTop: '72px',
+    marginTop: '8px',
+
+    '@media (min-width: 1200px)': {
+      marginTop: 'auto',
+      paddingTop: '72px'
+    },
 
     '& > div': {
       width: '100%',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      gap: '24px'
+      gap: '16px'
     },
 
     '& .MuiButton-root': {
-      minWidth: '110px',
-      height: '50px',
-      padding: '0 22px',
+      minWidth: '0',
+      height: '52px',
+      padding: '0 18px',
       borderRadius: '4px',
       fontSize: '13px',
       fontWeight: 450,

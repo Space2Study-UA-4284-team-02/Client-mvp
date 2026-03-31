@@ -56,12 +56,13 @@ const SubjectsStep = ({ btnsBox, stepLabel }) => {
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [subject, setSubject] = useState('')
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false)
+  const [isSubjectOpen, setIsSubjectOpen] = useState(false)
 
   const subjects = Array.isArray(stepData[stepLabel]) ? stepData[stepLabel] : []
 
   const subjectOptions = useMemo(() => {
     if (!selectedCategory) return []
-
     return subjectOptionsMap[selectedCategory.value] || []
   }, [selectedCategory])
 
@@ -97,7 +98,6 @@ const SubjectsStep = ({ btnsBox, stepLabel }) => {
 
   const handleDeleteSubject = (item) => {
     const updatedSubjects = subjects.filter((s) => s !== item)
-
     handleStepData(stepLabel, updatedSubjects, {})
 
     if (updatedSubjects.length <= MAX_VISIBLE_SUBJECTS) {
@@ -111,7 +111,7 @@ const SubjectsStep = ({ btnsBox, stepLabel }) => {
 
   return (
     <Box sx={styles.container}>
-      <Box sx={styles.leftBox}>
+      <Box sx={styles.leftBoxDesktop}>
         <Box
           alt='Subjects'
           component='img'
@@ -127,6 +127,15 @@ const SubjectsStep = ({ btnsBox, stepLabel }) => {
             can add in your account settings later.
           </Typography>
 
+          <Box sx={styles.leftBoxMobile}>
+            <Box
+              alt='Subjects'
+              component='img'
+              src={subjectsImage}
+              sx={styles.image}
+            />
+          </Box>
+
           <Autocomplete
             fullWidth
             getOptionLabel={(option) => option.label}
@@ -134,22 +143,22 @@ const SubjectsStep = ({ btnsBox, stepLabel }) => {
               option.value === value.value
             }
             onChange={handleCategoryChange}
+            onClose={() => setIsCategoryOpen(false)}
+            onOpen={() => setIsCategoryOpen(true)}
+            open={isCategoryOpen}
             options={categoryOptions}
             renderInput={(params) => (
               <TextField
                 {...params}
                 InputProps={{
                   ...params.InputProps,
-                  startAdornment: (
-                    <>
-                      <InputAdornment position='start'>
-                        <SearchIcon sx={{ fontSize: '18px' }} />
-                      </InputAdornment>
-                      {params.InputProps.startAdornment}
-                    </>
-                  )
+                  startAdornment: isCategoryOpen ? (
+                    <InputAdornment position='start'>
+                      <SearchIcon sx={{ fontSize: '18px' }} />
+                    </InputAdornment>
+                  ) : null
                 }}
-                label='Main Tutoring Category'
+                label='Main Study Category'
                 sx={styles.select}
               />
             )}
@@ -168,6 +177,18 @@ const SubjectsStep = ({ btnsBox, stepLabel }) => {
           />
 
           <TextField
+            InputProps={{
+              startAdornment: isSubjectOpen ? (
+                <InputAdornment position='start'>
+                  <SearchIcon sx={{ fontSize: '18px' }} />
+                </InputAdornment>
+              ) : null
+            }}
+            SelectProps={{
+              open: isSubjectOpen,
+              onOpen: () => setIsSubjectOpen(true),
+              onClose: () => setIsSubjectOpen(false)
+            }}
             disabled={!selectedCategory}
             fullWidth
             label='Subject'
@@ -208,7 +229,7 @@ const SubjectsStep = ({ btnsBox, stepLabel }) => {
               <Chip
                 label={`+${hiddenSubjectsCount}`}
                 onClick={handleToggleSubjects}
-                sx={styles.chip}
+                sx={styles.moreChip}
               />
             )}
 
@@ -216,7 +237,7 @@ const SubjectsStep = ({ btnsBox, stepLabel }) => {
               <Chip
                 label='Hide'
                 onClick={handleToggleSubjects}
-                sx={styles.chip}
+                sx={styles.moreChip}
               />
             )}
           </Box>
