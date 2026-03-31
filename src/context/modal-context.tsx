@@ -1,16 +1,18 @@
 import {
   FC,
+  ReactElement,
   createContext,
   useCallback,
   useContext,
   useMemo,
   useState
 } from 'react'
-import PopupDialog from '~/components/popup-dialog/PopupDialog'
 import { PaperProps } from '@mui/material/Paper'
 
+import PopupDialog from '~/components/popup-dialog/PopupDialog'
+
 interface Component {
-  component: React.ReactElement
+  component: ReactElement
   paperProps?: PaperProps
 }
 
@@ -20,7 +22,7 @@ interface ModalProvideContext {
 }
 
 interface ModalProviderProps {
-  children: React.ReactElement
+  children: ReactElement
 }
 
 const ModalContext = createContext<ModalProvideContext>(
@@ -28,7 +30,7 @@ const ModalContext = createContext<ModalProvideContext>(
 )
 
 const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
-  const [modal, setModal] = useState<React.ReactElement | null>(null)
+  const [modal, setModal] = useState<ReactElement | null>(null)
   const [paperProps, setPaperProps] = useState<PaperProps>({})
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
 
@@ -36,7 +38,7 @@ const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
     setModal(null)
     setPaperProps({})
     setTimer(null)
-  }, [setModal, setPaperProps, setTimer])
+  }, [])
 
   const closeModalAfterDelay = useCallback(
     (delay?: number) => {
@@ -50,15 +52,22 @@ const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
     ({ component, paperProps }: Component, delayToClose?: number) => {
       setModal(component)
 
-      paperProps && setPaperProps(paperProps)
-      delayToClose && closeModalAfterDelay(delayToClose)
+      if (paperProps) {
+        setPaperProps(paperProps)
+      } else {
+        setPaperProps({})
+      }
+
+      if (delayToClose) {
+        closeModalAfterDelay(delayToClose)
+      }
     },
-    [setModal, setPaperProps, closeModalAfterDelay]
+    [closeModalAfterDelay]
   )
 
   const contextValue = useMemo(
     () => ({ openModal, closeModal }),
-    [closeModal, openModal]
+    [openModal, closeModal]
   )
 
   return (
@@ -66,6 +75,7 @@ const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
       {children}
       {modal && (
         <PopupDialog
+          closeModal={closeModal}
           closeModalAfterDelay={closeModalAfterDelay}
           content={modal}
           paperProps={paperProps}

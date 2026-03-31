@@ -2,15 +2,23 @@ export const styles = {
   form: {
     display: 'flex',
     flexDirection: 'column',
-    minWidth: { sm: '340px' }
+    width: '100%',
+    maxWidth: '100%',
+    minWidth: 0
   },
+
   input: {
-    maxWidth: '343px'
+    width: '100%',
+    maxWidth: '100%'
   },
+
   loginButton: {
     width: '100%',
-    py: '14px'
+    py: '6px',
+    mt: '14px',
+    mb: '14px'
   },
+
   forgotPass: {
     cursor: 'pointer',
     textDecoration: 'none',
@@ -22,7 +30,10 @@ export const styles = {
       outline: '2px solid',
       borderRadius: '2px'
     },
-    mb: '20px',
-    alignSelf: 'end'
+    mb: '2px',
+    mt: '0px',
+    alignSelf: 'end',
+    fontSize: '11px',
+    lineHeight: '14px'
   }
 }

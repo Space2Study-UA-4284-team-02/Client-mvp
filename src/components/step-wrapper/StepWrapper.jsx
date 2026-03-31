@@ -1,6 +1,9 @@
 import { cloneElement } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
 
@@ -66,7 +69,24 @@ const StepWrapper = ({ children, steps }) => {
 
   return (
     <Container sx={styles.root}>
-      <Box sx={styles.steps}>{stepLabels}</Box>
+      <Box sx={styles.stepsWrapper}>
+        <Box
+          onClick={back}
+          sx={[styles.arrowButton, activeStep === 0 && styles.arrowDisabled]}
+        >
+          <ChevronLeftIcon sx={{ fontSize: 18 }} />
+        </Box>
+
+        <Box sx={styles.steps}>{stepLabels}</Box>
+
+        <Box
+          onClick={next}
+          sx={[styles.arrowButton, isLastStep && styles.arrowDisabled]}
+        >
+          <ChevronRightIcon sx={{ fontSize: 18 }} />
+        </Box>
+      </Box>
+
       <Box sx={styles.stepContent}>
         {cloneElement(children[activeStep], {
           btnsBox,

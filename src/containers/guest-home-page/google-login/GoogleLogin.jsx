@@ -16,7 +16,14 @@ const GoogleLogin = ({ type, buttonWidth, role }) => {
 
   const openLoginDialog = () => {
     closeModal()
-    setTimeout(() => openModal({ component: <LoginDialog /> }), 0)
+    setTimeout(
+      () =>
+        openModal({
+          component: <LoginDialog />,
+          disableFullScreenOnMobile: true
+        }),
+      0
+    )
   }
 
   return (
@@ -33,8 +40,9 @@ const GoogleLogin = ({ type, buttonWidth, role }) => {
         route={whatCanYouDo.path}
         type={type}
       />
+
       <Box sx={styles.haveAccount}>
-        <Typography sx={{ pr: 1 }} variant='body2'>
+        <Typography sx={{ pr: 0 }} variant='body2'>
           {t(`${type}.haveAccount`)}
         </Typography>
 
